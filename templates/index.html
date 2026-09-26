@@ -1,0 +1,85 @@
+@'
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Student Task Manager{% endblock %}
+
+{% block content %}
+    <h2>Dashboard</h2>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <div class="summary-cards">
+        <div class="card">
+            <h3>{{ total_count }}</h3>
+            <p>Total Tasks</p>
+        </div>
+        <div class="card">
+            <h3>{{ completed_count }}</h3>
+            <p>Completed</p>
+        </div>
+        <div class="card">
+            <h3>{{ pending_count }}</h3>
+            <p>Pending</p>
+        </div>
+    </div>
+
+    <a href="{{ url_for('add_task') }}" class="btn-add">+ Add New Task</a>
+
+<h3 class="task-list-heading">Your Tasks</h3>
+
+<div class="filter-tabs">
+    <a href="{{ url_for('home', status='all') }}"
+       class="{{ 'active' if status_filter == 'all' else '' }}">All</a>
+    <a href="{{ url_for('home', status='pending') }}"
+       class="{{ 'active' if status_filter == 'pending' else '' }}">Pending</a>
+    <a href="{{ url_for('home', status='completed') }}"
+       class="{{ 'active' if status_filter == 'completed' else '' }}">Completed</a>
+</div>
+
+    {% if tasks %}
+        <ul class="task-list">
+            {% for task in tasks %}
+                <li class="task-item {{ 'completed' if task.completed else 'pending' }}">
+                    <div class="task-info">
+                        <h4>{{ task.title }}</h4>
+                        {% if task.description %}
+                            <p>{{ task.description }}</p>
+                        {% endif %}
+                        <small>
+                            Created: {{ task.created_at.strftime('%d %b %Y') }}
+                            {% if task.due_date %}
+                                | Due: {{ task.due_date.strftime('%d %b %Y') }}
+                            {% endif %}
+                        </small>
+                        <span class="status-badge">
+                            {{ 'Completed' if task.completed else 'Pending' }}
+                        </span>
+                    </div>
+
+                    <div class="task-actions">
+                       <a href="{{ url_for('edit_task', task_id=task.id) }}" class="btn-edit">Edit</a>
+                        <a href="{{ url_for('toggle_task', task_id=task.id) }}" class="btn-toggle">
+                            {{ 'Mark Pending' if task.completed else 'Mark Complete' }}
+                        </a>
+                       <a href="{{ url_for('delete_task', task_id=task.id) }}"
+   class="btn-delete"
+   onclick="return confirm('Are you sure you want to delete this task?');">
+    Delete
+</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tasks yet. Add your first one above!</p>
+    {% endif %}
+{% endblock %}
+'@ | Set-Content -Path templates\index.html -Encoding utf8

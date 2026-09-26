@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Add Task - Student Task Manager{% endblock %}
+
+{% block content %}
+    <h2>Add a New Task</h2>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('add_task') }}" class="task-form">
+        <label for="title">Title *</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4"></textarea>
+
+        <label for="due_date">Due Date (optional)</label>
+        <input type="date" id="due_date" name="due_date">
+
+        <div class="form-buttons">
+            <button type="submit">Add Task</button>
+            <a href="{{ url_for('home') }}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+{% endblock %}
